@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Login to Your Personal Diary</h2>
+<form method="POST">
+    <input type="password" name="password" placeholder="Enter password" required>
+    <button type="submit">Login</button>
+</form>
+{% if get_flashed_messages() %}
+    <p class="error">{{ get_flashed_messages()[0] }}</p>
+{% endif %}
+{% endblock %}

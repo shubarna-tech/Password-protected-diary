@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>My Personal Diary</h2>
+<div class="top-bar">Date: {{ entries[-1]['timestamp'] if entries else '' }}</div>
+<form method="POST" action="{{ url_for('add') }}">
+    <textarea name="text" placeholder="Write something..."></textarea>
+    <button type="submit">Add Entry</button>
+</form>
+<ul class="entry-list">
+    {% for entry in entries %}
+    <li>
+        <div class="page-number">Page {{ loop.index }}</div>
+        <div class="timestamp">{{ entry.timestamp }}</div>
+        <div>{{ entry.text }}</div>
+        <div style="margin-top: 10px;">
+            <a href="{{ url_for('edit', index=loop.index0) }}">Edit</a>
+            <form method="POST" action="{{ url_for('delete', index=loop.index0) }}" style="display:inline">
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('change_password') }}">Change Password</a> |
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endblock %}
