@@ -1,8 +1,26 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h2>Edit Diary Entry</h2>
-<form method="POST">
-    <textarea name="text">{{ entry.text }}</textarea>
+<form method="POST" enctype="multipart/form-data">
+    <input type="text" name="title" value="{{ entry.title }}" required><br><br>
+    <div id="editor" style="height: 150px;">{{ entry.text | safe }}</div>
+    <input type="hidden" name="text" id="hidden-text"><br><br>
+    <input type="text" name="tags" value="{{ entry.tags }}"><br><br>
+    <label>Mood:</label>
+    <select name="mood">
+        <option value="">--Select Mood--</option>
+        <option value="😊" {% if entry.mood == '😊' %}selected{% endif %}>Happy</option>
+        <option value="😢" {% if entry.mood == '😢' %}selected{% endif %}>Sad</option>
+        <option value="😡" {% if entry.mood == '😡' %}selected{% endif %}>Angry</option>
+        <option value="😴" {% if entry.mood == '😴' %}selected{% endif %}>Tired</option>
+        <option value="😌" {% if entry.mood == '😌' %}selected{% endif %}>Relaxed</option>
+    </select><br><br>
+    <label>Replace Image:</label>
+    <input type="file" name="image" accept="image/*"><br><br>
+    {% if entry.image %}
+    <p>Current Image:</p>
+    <img src="{{ entry.image }}" alt="Current Image" style="max-width: 100%; margin-top: 10px;"><br><br>
+    {% endif %}
     <button type="submit">Save</button>
 </form>
 <a href="{{ url_for('diary') }}">Back to Diary</a>

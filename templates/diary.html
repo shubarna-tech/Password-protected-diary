@@ -1,26 +1,107 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h2>My Personal Diary</h2>
-<div class="top-bar">Date: {{ entries[-1]['timestamp'] if entries else '' }}</div>
-<form method="POST" action="{{ url_for('add') }}">
-    <textarea name="text" placeholder="Write something..."></textarea>
+
+<div class="top-bar">
+    Date: {{ entries[-1]['timestamp'] if entries else '' }}
+</div>
+
+<!--  SEARCH FORM -->
+<form method="GET" action="{{ url_for('search') }}" style="margin-bottom: 20px;">
+    <input type="text" name="q" placeholder="Search keyword/title/tag">
+    <input id="calendar" type="text" name="date" placeholder="Select Date">
+    <button type="submit">Search</button>
+    {% if search_active %}
+        <a href="{{ url_for('diary') }}">Clear Search</a>
+    {% endif %}
+</form>
+
+<!-- ⭐ FAVORITES FILTER -->
+<a href="{{ url_for('view_favorites') }}">⭐ View Favorites</a>
+
+{% if search_active %}
+    | <a href="{{ url_for('diary') }}">Show All</a>
+{% endif %}
+
+<!--  SORTING -->
+<form method="GET" action="{{ url_for('diary') }}" style="margin-bottom: 20px;">
+    <label>Sort by:</label>
+    <select name="sort" onchange="this.form.submit()">
+        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest First</option>
+        <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest First</option>
+        <option value="title-az" {% if sort_by == 'title-az' %}selected{% endif %}>Title A–Z</option>
+        <option value="title-za" {% if sort_by == 'title-za' %}selected{% endif %}>Title Z–A</option>
+    </select>
+</form>
+
+<!-- ADD ENTRY FORM -->
+<form method="POST" action="{{ url_for('add') }}" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Entry Title" required><br><br>
+    <div id="editor" style="height: 150px;"></div>
+    <input type="hidden" name="text" id="hidden-text"><br><br>
+    <input type="text" name="tags" placeholder="Tags (comma-separated)"><br><br>
+    <label>Mood:</label>
+    <select name="mood">
+        <option value="">--Select Mood--</option>
+        <option value="😊">Happy</option>
+        <option value="😢">Sad</option>
+        <option value="😡">Angry</option>
+        <option value="😴">Tired</option>
+        <option value="😌">Relaxed</option>
+    </select><br><br>
+    <label>Attach Image:</label>
+    <input type="file" name="image" accept="image/*"><br><br>
     <button type="submit">Add Entry</button>
 </form>
+
+<!-- ENTRY LIST -->
 <ul class="entry-list">
     {% for entry in entries %}
     <li>
         <div class="page-number">Page {{ loop.index }}</div>
+        <h3>{{ entry.title }}</h3>
         <div class="timestamp">{{ entry.timestamp }}</div>
-        <div>{{ entry.text }}</div>
+        <p><strong>Tags:</strong> {{ entry.tags }}</p>
+        <p><strong>Mood:</strong> {{ entry.mood }}</p>
+        {% if entry.image %}
+        <div><img src="{{ entry.image }}" alt="Attached Image" style="max-width: 100%; margin-top: 10px;"></div>
+        {% endif %}
+        <div>{{ entry.text | safe }}</div>
+
         <div style="margin-top: 10px;">
-            <a href="{{ url_for('edit', index=loop.index0) }}">Edit</a>
+            <a href="{{ url_for('edit', index=loop.index0) }}">✏️ Edit</a>
+            <a href="{{ url_for('view_history', index=loop.index0) }}">📜 History</a>
+
+            <form method="POST" action="{{ url_for('toggle_favorite', index=loop.index0) }}" style="display:inline">
+                <button type="submit">
+                    {% if entry.favorite %}
+                        ⭐ Unmark Favorite
+                    {% else %}
+                        ☆ Mark Favorite
+                    {% endif %}
+                </button>
+            </form>
+
             <form method="POST" action="{{ url_for('delete', index=loop.index0) }}" style="display:inline">
-                <button type="submit">Delete</button>
+                <button type="submit">🗑 Delete</button>
             </form>
         </div>
     </li>
     {% endfor %}
 </ul>
+
+<!-- PAGINATION CONTROLS -->
+<div style="text-align:center; margin-top: 20px;">
+    {% if page > 1 %}
+        <a href="{{ url_for('diary', page=page-1, sort=sort_by) }}">&laquo; Prev</a>
+    {% endif %}
+    <span> Page {{ page }} of {{ total_pages }} </span>
+    {% if page < total_pages %}
+        <a href="{{ url_for('diary', page=page+1, sort=sort_by) }}">Next &raquo;</a>
+    {% endif %}
+</div>
+
+<!-- OPTIONS -->
 <a href="{{ url_for('change_password') }}">Change Password</a> |
 <a href="{{ url_for('logout') }}">Logout</a>
 {% endblock %}

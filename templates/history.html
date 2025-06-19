@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>📜 Edit History - Entry {{ index + 1 }}</h2>
+
+{% if versions %}
+    <ul class="entry-list">
+        {% for version in versions %}
+        <li>
+            <h3>{{ version.title }}</h3>
+            <div class="timestamp">Edited At: {{ version.edited_at }}</div>
+            <p><strong>Tags:</strong> {{ version.tags }}</p>
+            <p><strong>Mood:</strong> {{ version.mood }}</p>
+            {% if version.image %}
+            <div><img src="{{ version.image }}" style="max-width: 100%;"></div>
+            {% endif %}
+            <div>{{ version.text | safe }}</div>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No history found for this entry.</p>
+{% endif %}
+
+<a href="{{ url_for('diary') }}">Back to Diary</a>
+{% endblock %}
