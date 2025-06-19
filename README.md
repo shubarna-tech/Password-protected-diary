@@ -5,19 +5,33 @@ A password-protected diary web app where your thoughts are safely encrypted and 
 🔐 Features
 
 -Login system with encryption + OTP (terminal-based 2FA)
+
 -Add new diary entries with title, tags, mood, and rich text
+
 -View entries with page numbers and timestamps
+
 -Edit diary entries with versioned edit history
+
 -Mark entries as ⭐ Favorite / Unmark
+
 -Attach images to entries
+
 -Delete entries safely
+
 -Change password securely (with reuse protection)
+
 -Search entries by keyword, tag, or date
+
 -Filter favorites and sort entries (Newest, A–Z, Z–A)
+
 -Pagination for browsing entries
+
 -Calendar picker for selecting date
+
 -Dark Mode toggle (remembers your choice)
+
 -Responsive design for mobile and desktop
+
 -All data is encrypted and stored locally
 
 🛠 Tech Stack
